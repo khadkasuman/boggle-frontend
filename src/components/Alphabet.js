@@ -4,8 +4,9 @@ class Alphabet extends React.Component {
   render() {
     return (
       <button
+        className="btn btn-primary btn-block"
         disabled={this.props.disabled}
-        onClick={this.props.alphabetClicked}
+        onMouseOver={this.props.alphabetHovered}
       >
         {this.props.alphabet}
       </button>
