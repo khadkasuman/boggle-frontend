@@ -6,7 +6,7 @@ class Alphabet extends React.Component {
       <button
         className="btn btn-success btn-block"
         disabled={this.props.disabled}
-        onClick={this.props.alphabetHovered}
+        onClick={this.props.alphabetClicked}
       >
         {this.props.alphabet}
       </button>
