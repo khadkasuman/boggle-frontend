@@ -13,7 +13,8 @@ class App extends React.Component {
       countdown: 3 * 60,
       message: "",
       loading: true,
-      wordPath: []
+      wordPath: [],
+      showAnswers: false
     };
   }
   componentDidMount() {
@@ -37,17 +38,18 @@ class App extends React.Component {
         }
       })
       .catch(er => {
-        console.log(er);
+        this.setState({
+          loading: false,
+          message: "Failed to connect to backend server"
+        });
       });
   }
 
   disableButton = (x, y) => {
-    console.log(this.state.wordPath)
-    return (
-      (this.state.active
-        ? (!this.neighbors(x, y).includes(this.state.active) || this.state.wordPath.includes(`${x}, ${y}`))
-        : false)
-    );
+    return this.state.active
+      ? !this.neighbors(x, y).includes(this.state.active) ||
+          this.state.wordPath.includes(`${x}, ${y}`)
+      : false;
   };
 
   neighbors = (x, y, neighbors = [x, y]) => {
@@ -57,25 +59,29 @@ class App extends React.Component {
           `${x + i}, ${y}`,
           `${x}, ${y + i}`,
           `${x + i}, ${y + i}`,
-          `${x - i}, ${y + i}`
+          `${x - i}, ${y + i}`,
+          `${x + i}, ${y - i}`
         ]
       );
     });
     return neighbors;
   };
   submitWord = () => {
-    if (this.state.word === "") return;
-    if(this.state.correctAnswers.includes(this.state.word)){
+    if (this.state.word === "" || this.state.word.length < 3) return;
+    if (this.state.correctAnswers.includes(this.state.word)) {
       this.setState({
-        message: this.state.word + " is already guessed."
-      })
-    }
-    else if (this.state.answers.includes(this.state.word)) {
+        message: this.state.word + " is already guessed.",
+        word: "",
+        active: null,
+        wordPath: []
+      });
+    } else if (this.state.answers.includes(this.state.word)) {
       this.setState(state => {
         return {
           correctAnswers: [...state.correctAnswers, this.state.word],
           word: "",
-          active: null
+          active: null,
+          wordPath: []
         };
       });
     } else {
@@ -96,8 +102,6 @@ class App extends React.Component {
         word: state.word + state.sequence[x][y]
       };
     });
-
-    console.log(this.state.active)
   };
 
   boggleBoard = () => (
@@ -118,6 +122,18 @@ class App extends React.Component {
     </div>
   );
 
+  wordTyped = word => {
+    this.setState({
+      word
+    });
+  };
+
+  toggleAnswerView = () =>{
+    this.setState(state =>({
+      showAnswers: !state.showAnswers
+    }))
+  }
+
   render = () => {
     let timeRemaining = (
       <div className="mb-4">
@@ -128,8 +144,10 @@ class App extends React.Component {
             <div>
               Game Over! Total Points:{" "}
               {this.state.correctAnswers.join("").length}
-              <br/>
-              <button onClick={window.loaction.reload()}>Start New Game</button>
+              <br />
+              <button onClick={() => window.loaction.reload()}>
+                Start New Game
+              </button>
             </div>
           )}
         </h4>
@@ -149,8 +167,8 @@ class App extends React.Component {
         <div className="card card-body container mt-5">
           <div className="row justify-content-center">{timeRemaining}</div>
           <div className="row">
-            <div className="col-md-6">{boggleBoard}</div>
-            <div className="col-md-6 bg-light p-2">
+            <div className="col-md-5">{boggleBoard}</div>
+            <div className="col-md-7 bg-light p-2">
               <div className="font-weight-bold">Correct Answers</div>
               {this.state.correctAnswers.map(answer => {
                 return (
@@ -171,12 +189,14 @@ class App extends React.Component {
             <input
               type="text"
               value={this.state.word}
-              readOnly
-              className="form-control col-md-5"
+              onChange={e => {
+                this.wordTyped(e.target.value);
+              }}
+              className="form-control col-md-4"
               placeholder="Enter valid word"
             />
             <button
-              className="btn btn-sm btn-primary mx-1 col-md-1"
+              className="btn btn-sm btn-primary mx-2 col-md-2"
               disabled={this.state.countdown === 0}
             >
               Submit
@@ -189,6 +209,14 @@ class App extends React.Component {
               )}
             </div>
           </form>
+          <div className="mt-5 border-top row">
+            <h5 className="col-12">Instruction</h5>
+            <div className="col-12">Guess the word from the board( or type it) and press submit to confirm it.</div>
+            <button className="col-12 btn btn-link" onClick={() =>{this.toggleAnswerView()}}>Just show me the answers</button>
+            {
+              this.state.showAnswers? (<div className="col-12">{this.state.answers.toString()}</div>): (<div></div>)
+            }
+          </div>
         </div>
       </div>
     );
