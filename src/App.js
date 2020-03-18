@@ -18,6 +18,10 @@ class App extends React.Component {
     };
   }
   componentDidMount() {
+    this.getSequence()
+  }
+
+  getSequence = () =>{
     fetch(BOGGLE_URL)
       .then(r => r.json())
       .then(data => {
@@ -28,12 +32,15 @@ class App extends React.Component {
             loading: false
           });
           const timer = setInterval(() => {
-            if (this.state.countdown === 0) clearInterval(timer);
+            console.log(this.state.countdown)
             this.setState(state => {
               return {
-                countdown: state.countdown--
+                countdown: state.countdown - 1
               };
+            }, () =>{
+              if (this.state.countdown === 0) clearInterval(timer);
             });
+            
           }, 1000);
         }
       })
@@ -44,6 +51,7 @@ class App extends React.Component {
         });
       });
   }
+
 
   disableButton = (x, y) => {
     return this.state.active
@@ -122,6 +130,16 @@ class App extends React.Component {
     </div>
   );
 
+  startNewGame = () =>{
+    this.setState({
+      word: null,
+      wordpath: [],
+      active: null,
+      countdown: 3 * 60
+    })
+    this.getSequence()
+  }
+
   wordTyped = word => {
     this.setState({
       word
@@ -141,11 +159,10 @@ class App extends React.Component {
           {this.state.countdown !== 0 ? (
             <div>Time Remaining {this.state.countdown} Seconds.</div>
           ) : (
-            <div>
-              Game Over! Total Points:{" "}
-              {this.state.correctAnswers.join("").length}
-              <br />
-              <button onClick={() => window.loaction.reload()}>
+            <div className="text-center">
+              Game Over! Total Points Scored:{" "}
+              {this.state.correctAnswers.join("").length}<br/>
+              <button className="btn btn-link align-center" onClick={() => this.startNewGame()}>
                 Start New Game
               </button>
             </div>
