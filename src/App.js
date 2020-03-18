@@ -1,6 +1,6 @@
 import React from "react";
 import Alphabet from "./components/Alphabet";
-const BOGGLE_URL = "http://localhost:4000/boggle/generate";
+const BOGGLE_URL = "https://boggle-suman.herokuapp.com/boggle/generate";
 class App extends React.Component {
   constructor(props) {
     super(props);
