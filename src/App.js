@@ -133,7 +133,9 @@ class App extends React.Component {
   startNewGame = () =>{
     this.setState({
       word: "",
-      answers: [],
+      correctAnswers: [],
+      showAnswers: false,
+      loading: true,
       wordpath: [],
       active: null,
       countdown: 3 * 60
