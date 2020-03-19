@@ -132,7 +132,8 @@ class App extends React.Component {
 
   startNewGame = () =>{
     this.setState({
-      word: null,
+      word: "",
+      answers: [],
       wordpath: [],
       active: null,
       countdown: 3 * 60
@@ -185,7 +186,7 @@ class App extends React.Component {
           <div className="row justify-content-center">{timeRemaining}</div>
           <div className="row">
             <div className="col-md-5">{boggleBoard}</div>
-            <div className="col-md-7 bg-light p-2">
+            <div className="col-md-7 bg-light p-4">
               <div className="font-weight-bold">Correct Answers</div>
               {this.state.correctAnswers.map(answer => {
                 return (
