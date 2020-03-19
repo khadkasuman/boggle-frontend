@@ -16,6 +16,7 @@ class App extends React.Component {
       wordPath: [],
       showAnswers: false
     };
+    this.initialState = this.state
   }
   componentDidMount() {
     this.getSequence()
@@ -131,15 +132,7 @@ class App extends React.Component {
   );
 
   startNewGame = () =>{
-    this.setState({
-      word: "",
-      correctAnswers: [],
-      showAnswers: false,
-      loading: true,
-      wordpath: [],
-      active: null,
-      countdown: 3 * 60
-    })
+    this.setState(this.initialState)
     this.getSequence()
   }
 
